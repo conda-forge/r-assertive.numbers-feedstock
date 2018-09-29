@@ -1,5 +1,4 @@
 {% set version = '0.0-2' %}
-
 {% set posix = 'm2-' if win else '' %}
 {% set native = 'm2w64-' if win else '' %}
 
@@ -10,30 +9,31 @@ package:
 source:
   fn: assertive.numbers_{{ version }}.tar.gz
   url:
-    - https://cran.r-project.org/src/contrib/assertive.numbers_{{ version }}.tar.gz
-    - https://cran.r-project.org/src/contrib/Archive/assertive.numbers/assertive.numbers_{{ version }}.tar.gz
+    - {{ cran_mirror }}/src/contrib/assertive.numbers_{{ version }}.tar.gz
+    - {{ cran_mirror }}/src/contrib/Archive/assertive.numbers/assertive.numbers_{{ version }}.tar.gz
   sha256: bae18c0b9e5b960a20636e127eb738ecd8a266e5fc29d8bc5ca712498cd68349
 
 build:
-  number: 0
+  merge_build_host: True  # [win]
+  number: 1
   skip: true  # [win32]
-
   rpaths:
     - lib/R/lib/
     - lib/
 
 requirements:
   build:
+    - {{posix}}zip               # [win]
+  host:
     - r-base
     - r-assertive.base >=0.0_2
-
   run:
     - r-base
     - r-assertive.base >=0.0_2
 
 test:
   commands:
-    - $R -e "library('assertive.numbers')"  # [not win]
+    - $R -e "library('assertive.numbers')"           # [not win]
     - "\"%R%\" -e \"library('assertive.numbers')\""  # [win]
 
 about:
@@ -48,8 +48,10 @@ about:
 
 extra:
   recipe-maintainers:
+    - jenzopr
     - johanneskoester
     - bgruening
     - daler
     - jdblischak
-    - jenzopr
+    - cbrueffer
+    - dbast
